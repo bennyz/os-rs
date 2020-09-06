@@ -3,6 +3,8 @@
 #![no_main]
 extern crate rlibc;
 
+mod vga_buffer;
+
 use core::panic::PanicInfo;
 
 #[panic_handler]
