@@ -102,6 +102,7 @@ impl fmt::Write for Writer {
 }
 
 pub fn print_something() {
+    use core::fmt::Write;
     let mut writer = Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
@@ -109,6 +110,6 @@ pub fn print_something() {
     };
 
     writer.write_byte(b'H');
-    writer.write_string("ello ");
-    writer.write_string("Wörld!");
+    writer.write_string("ello! ");
+    write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
 }
