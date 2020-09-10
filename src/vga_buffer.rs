@@ -1,5 +1,5 @@
-use volatile::Volatile;
 use core::fmt;
+use volatile::Volatile;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -90,7 +90,31 @@ impl Writer {
         }
     }
 
-    fn new_line(&mut self) { /* TODO */
+    fn new_line(&mut self) {
+        // Skipping 0 because we want to remove the first row
+        for row in 1..BUFFER_HEIGHT {
+            // Move every character one row up
+            for col in 0..BUFFER_WIDTH {
+                let character = self.buffer.chars[row][col].read();
+                self.buffer.chars[row - 1][col].write(character);
+            }
+        }
+
+        // Clear the last row
+        self.clear_row(BUFFER_HEIGHT - 1);
+        self.column_position = 0; // Reset cursor position
+    }
+
+    fn clear_row(&mut self, row: usize) {
+        let blank = ScreenChar {
+            ascii_character: b' ',
+            color_code: self.color_code,
+        };
+
+        // Write the blank char in the row
+        for col in 0..BUFFER_WIDTH {
+            self.buffer.chars[row][col].write(blank);
+        }
     }
 }
 
@@ -111,5 +135,5 @@ pub fn print_something() {
 
     writer.write_byte(b'H');
     writer.write_string("ello! ");
-    write!(writer, "The numbers are {} and {}", 42, 1.0/3.0).unwrap();
+    write!(writer, "The numbers are {} and {}", 42, 1.0 / 3.0).unwrap();
 }
